@@ -25,7 +25,7 @@ SECRET_KEY = 'mqts4la3z-g)%d3!+so)7xki68%ffw5k*4_fu9%^8(0653wx37'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
