@@ -1,9 +1,11 @@
-from .models import *
+from datetime import datetime, timedelta
+from django.urls import reverse
+from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.request import Request
 from rest_framework.test import APIRequestFactory
-from datetime import datetime, timedelta
-from django.urls import reverse
+
+from .models import *
 
 factory = APIRequestFactory()
 request = factory.get('/')
@@ -23,21 +25,20 @@ class PropertySerializer_List(serializers.ModelSerializer):
         model = Property
         fields = ('id', 'title', 'address')
 
+
+nx = timezone.now()
+
 class ActivitySerializer_List(serializers.HyperlinkedModelSerializer):
     property = PropertySerializer_List(many=False, read_only=True)
-    # property = serializers.HyperlinkedRelatedField(
-    #     many=False,
-    #     read_only=True,
-    #     view_name='property-detail'
-    # )
-
     condition = serializers.SerializerMethodField()
     survey = serializers.SerializerMethodField()
 
     def get_condition(self, obj):
         result = 'Cancelada'
+        print(type(obj.schedule))
+        print(type(datetime.now()))
         if obj.status == 'active':
-            if obj.schedule >= datetime.now:
+            if obj.schedule >= nx:
                 result = 'Pendiente a realizar'
             else:
                 result = 'Atrasada'

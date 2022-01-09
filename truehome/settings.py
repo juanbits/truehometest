@@ -94,7 +94,7 @@ DATABASES = {
     #     'PORT': '5432',
     # }
     'default': dj_database_url.config(
-        default=config('DATABASE_URL2')
+        default=config('DATABASE_URL', default='postgres://root:JuanCarlos22@localhost:5432/truehome_db')
     )
 }
 
