@@ -7,9 +7,6 @@ from rest_framework.test import APIRequestFactory
 
 from .models import *
 
-factory = APIRequestFactory()
-request = factory.get('/')
-
 # C nuevas create
 # R listar list
 # U reagendar
@@ -35,8 +32,6 @@ class ActivitySerializer_List(serializers.HyperlinkedModelSerializer):
 
     def get_condition(self, obj):
         result = 'Cancelada'
-        print(type(obj.schedule))
-        print(type(datetime.now()))
         if obj.status == 'active':
             if obj.schedule >= nx:
                 result = 'Pendiente a realizar'
