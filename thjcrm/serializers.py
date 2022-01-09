@@ -50,7 +50,7 @@ class ActivitySerializer_List(serializers.HyperlinkedModelSerializer):
         survey = Survey.objects.filter(activity=obj.pk)
         if survey.exists():
             url = reverse('survey-detail', kwargs={'pk': survey.first().pk})
-            result = request.build_absolute_uri(url)
+            result = self.context['request']._current_scheme_host + url
         return result
 
     class Meta:
