@@ -20,12 +20,12 @@ class ActivityViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         if len(self.request.query_params) > 0 :
-            queryset = Activity.objects.all()
+            queryset = Activity.objects.all().prefetch_related('survey')
             queryset = ActivityFilter(data=request.GET, queryset=queryset, request=request).qs
         else:
             schedule_menos3dias = datetime.now() - timedelta(days=3)
             schedule_mas2semanas = datetime.now() + timedelta(weeks=2)
-            queryset = Activity.objects.exclude(status='cancel').filter(schedule__gt = schedule_menos3dias ).filter(schedule__lt = schedule_mas2semanas )            
+            queryset = Activity.objects.exclude(status='cancel').filter(schedule__gt = schedule_menos3dias ).filter(schedule__lt = schedule_mas2semanas ).prefetch_related('survey')
         
         serializer = ActivitySerializer_List(queryset, many=True, context={'request':request})
         return Response(serializer.data)

@@ -20,7 +20,7 @@ class PropertySerializer(serializers.ModelSerializer):
 class PropertySerializer_List(serializers.ModelSerializer):
     class Meta:
         model = Property
-        fields = ('id', 'title', 'address')
+        fields = ('id', 'title', 'address', 'status')
 
 
 nx = timezone.now()
@@ -28,7 +28,12 @@ nx = timezone.now()
 class ActivitySerializer_List(serializers.HyperlinkedModelSerializer):
     property = PropertySerializer_List(many=False, read_only=True)
     condition = serializers.SerializerMethodField()
-    survey = serializers.SerializerMethodField()
+    # survey = serializers.SerializerMethodField()
+    survey = serializers.HyperlinkedRelatedField(
+        many=False,
+        read_only=True,
+        view_name='survey-detail'
+    )
 
     def get_condition(self, obj):
         result = 'Cancelada'
@@ -41,19 +46,21 @@ class ActivitySerializer_List(serializers.HyperlinkedModelSerializer):
             result = 'Finalizada'
         return result
     
-    def get_survey(self, obj):
-        result = None
-        survey = Survey.objects.filter(activity=obj.pk)
-        if survey.exists():
-            url = reverse('survey-detail', kwargs={'pk': survey.first().pk})
-            result = self.context['request']._current_scheme_host + url
-        return result
+    # def get_survey(self, obj):
+    #     result = None
+    #     survey = Survey.objects.filter(activity=obj.pk)
+    #     if survey.exists():
+    #         url = reverse('survey-detail', kwargs={'pk': survey.first().pk})
+    #         result = self.context['request']._current_scheme_host + url
+    #     return result
 
     class Meta:
         model = Activity
         fields = ('id', 'schedule', 'title', 'created_at', 'status', 'property', 'condition', 'survey')
 
 class ActivitySerializer(serializers.ModelSerializer):
+    property = serializers.PrimaryKeyRelatedField(queryset=Property.objects.exclude(status='inactiva'))
+
     class Meta:
         model = Activity
         fields = '__all__'
@@ -84,3 +91,14 @@ class SurveySerializer(serializers.ModelSerializer):
     class Meta:
         model = Survey
         fields = '__all__'
+
+class ActivitySerializer2(serializers.ModelSerializer):
+    survey = serializers.SlugRelatedField(
+        many=False,
+        read_only=True,
+        slug_field='answers'
+    )
+
+    class Meta:
+        model = Activity
+        fields = ['id', 'title', 'survey']
