@@ -28,7 +28,6 @@ nx = timezone.now()
 class ActivitySerializer_List(serializers.HyperlinkedModelSerializer):
     property = PropertySerializer_List(many=False, read_only=True)
     condition = serializers.SerializerMethodField()
-    # survey = serializers.SerializerMethodField()
     survey = serializers.HyperlinkedRelatedField(
         many=False,
         read_only=True,
@@ -45,14 +44,6 @@ class ActivitySerializer_List(serializers.HyperlinkedModelSerializer):
         elif obj.status == 'done':
             result = 'Finalizada'
         return result
-    
-    # def get_survey(self, obj):
-    #     result = None
-    #     survey = Survey.objects.filter(activity=obj.pk)
-    #     if survey.exists():
-    #         url = reverse('survey-detail', kwargs={'pk': survey.first().pk})
-    #         result = self.context['request']._current_scheme_host + url
-    #     return result
 
     class Meta:
         model = Activity
